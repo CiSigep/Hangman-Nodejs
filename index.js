@@ -17,6 +17,7 @@ function playAgainPrompt(){
             correctWord = bank.random();
             word = new Word(correctWord);
             alreadyGuessed = [];
+            console.log(word.toString());
             playGame();
         }
         
@@ -87,4 +88,5 @@ var word = new Word(correctWord);
 var alreadyGuessed = [];
 var guesses = 10;
 
+console.log(word.toString());
 playGame();
