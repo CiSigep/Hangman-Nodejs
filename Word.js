@@ -28,10 +28,13 @@ var Word = function(word) {
         var found = false;
 
         this.word.forEach(element => {
-            element.checkInput(letter);
-            if(element.isFound())
+            if(!element.isFound()){
+                element.checkInput(letter);
+                if(element.isFound())
                 found = true;
+            }
         });
+        
         return found;
     }
 
