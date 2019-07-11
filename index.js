@@ -1,21 +1,9 @@
-var Word = require("./Word");
 var colors = require("colors");
 var inquirer = require("inquirer");
+var Word = require("./Word");
+var WordBank = require("./WordBank");
 
-var WordBank = function () {
-    this.words = ["Mario", "Luigi", "Samus", "Nero", "Dante", "Ness", "Lucas", "Falco", "Fox", "Snake",
-            "Link", "Yoshi", "Kirby", "Bowser", "Peach", "Daisy", "Wario", "Waluigi", "Sonic", "Shadow",
-            "Shulk", "Ryu", "Ken", "Olimar", "Cloud", "Ridley", "Simon", "Richter", "Rosalina", "Zelda", "Shiek",
-            "Wolf", "Bayonetta", "Roy", "Marth", "Pit", "Joker", "Chrom", "Ike", "Robin", "Corrin", "Palutena",
-            "Isabelle", "Kratos", "Ganondorf", "GLaDOS", "Tails", "Knuckles", "Banjo", "Kazooie", "Sora",
-            "Jak", "Daxter", "Ratchet", "Clank", "Spyro"],
-
-    // Gives a random word when  called
-    this.random =  function() {
-        return this.words[Math.floor(Math.random() * this.words.length)];
-    }
-};
-
+// Asks the player if they want to play again.
 function playAgainPrompt(){
     inquirer.prompt([{
         type: "list",
@@ -24,6 +12,7 @@ function playAgainPrompt(){
         name: "again"
     }]).then(res => {
         if(res.again === "Yes"){
+            // Reset the game.
             guesses = 10;
             correctWord = bank.random();
             word = new Word(correctWord);
@@ -35,16 +24,17 @@ function playAgainPrompt(){
     });
 }
 
+// Function for playing the game.
 function playGame() {
     inquirer.prompt([{
         message: "Guess a Letter: ",
         name: "guess",
         validate: input => {
-            if(input.length !== 1 && input !== "quit")
+            if(input.length !== 1 && input !== "quit") // Only allow inputs of length 1 or "quit"
                 return "Input must be a single character long."
-            else if(input.length === 1 && !/[a-z]/i.test(input))
+            else if(input.length === 1 && !/[a-z]/i.test(input)) // Inputs of length 1 must be a character.
                 return "Input must be letter.";
-            else if(input.length === 1 && alreadyGuessed.indexOf(input.toLowerCase()) >= 0)
+            else if(input.length === 1 && alreadyGuessed.indexOf(input.toLowerCase()) >= 0) // Inputs must not have already been used.
                 return "You have already used this character.";
             
             return true;
@@ -54,10 +44,12 @@ function playGame() {
             return;
         }
 
+        // Check our letter in the word and add it to used.
         var guessed = word.checkInput(res.guess);
         alreadyGuessed.push(res.guess.toLowerCase());
 
-        if(guessed) {
+        
+        if(guessed) { // Correct 
             console.log("Correct!".green);
             console.log(word.toString());
             if(word.isComplete()){
@@ -67,10 +59,10 @@ function playGame() {
             else
                 playGame();
         }
-        else {
+        else { // Incorrect
             guesses--;
             console.log("Incorrect!".red);
-            console.log("Guesses Left: " + guesses)
+            console.log("Guesses Left: " + guesses);
             console.log(word.toString());
             if(guesses > 0) {
                 playGame();
@@ -86,6 +78,7 @@ function playGame() {
 
 }
 
+// Initialize game.
 var bank = new WordBank();
 
 var correctWord = bank.random();
